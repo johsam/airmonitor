@@ -1,0 +1,54 @@
+#!/bin/bash
+# pubnummgr daemon
+# chkconfig: 345 20 80
+# description: pubnummgr daemon
+# processname: pubnummgr.py
+
+### BEGIN INIT INFO
+# Provides:          airmonitor
+# Required-Start:    $syslog $remote_fs $network $time
+# Required-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start and stop the airmonitor daemon
+# Description:       Read data from airsensor
+### END INIT INFO
+
+##############################################################################
+#
+# Note, you might need to change the parameters below, the current settings
+# are for default setup.
+#
+##############################################################################
+
+[ -r "/etc/default/airmonitor" ] && source /etc/default/airmonitor
+
+NAME=airmonitor
+DESC="airmonitor daemon startup script"
+PIDFILE=/var/run/$NAME.pid
+
+SCRIPTNAME=/etc/init.d/$NAME
+DAEMON=/home/pi/airmonitor/airmonitor.py
+DAEMONOPTS="--pid-file ${PIDFILE} --influx-host ${INFLUXHOST} --influx-db ${INFLUXDB}"
+
+
+case "$1" in
+	start)
+		${DAEMON} --start  ${DAEMONOPTS}
+	;;
+	status)
+		${DAEMON} --status ${DAEMONOPTS}
+	;;
+
+	stop)
+		${DAEMON} --stop   ${DAEMONOPTS}
+	;;
+
+	restart)
+  		${DAEMON} --restart ${DAEMONOPTS}
+	;;
+
+*)
+        echo "Usage: $0 {status|start|stop|restart}"
+        exit 1
+esac
